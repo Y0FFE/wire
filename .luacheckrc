@@ -3721,4 +3721,5 @@ stds.wiremod.globals = {
   "pairs_sortkeys",
   "pairs_sortvalues",
   "HUDIndicator_GetCurrentRegistered",
+  "initE2Editor",
 }
