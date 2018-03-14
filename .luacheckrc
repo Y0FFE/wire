@@ -3611,6 +3611,7 @@ stds.garrysmod.read_globals = {
   "NULL",
   "SERVER",
   "VERSION",
+  "TEXFILTER"
 }
 stds.garrysmod.globals = {
   "ENT",
@@ -3640,6 +3641,7 @@ stds.wiremod.globals = {
   "WireGPU_matBuffer",
   "WireSPU_GetSound",
   "WireSPU_MaxChannels",
+  "WireGPU_Monitors",
 
   -- TODO: Move these into E2Lib:
   "__e2setcost",
