@@ -19,7 +19,7 @@ if CLIENT then
 	matTrans = Vector(0, 0, 0)
 end
 
-Obj.Draw = function( self )
+Obj.Draw = function( self, ent )
 	if (self.text and #self.text>0) then
 		surface.SetTextColor( self.r, self.g, self.b, self.a )
 
@@ -50,12 +50,26 @@ Obj.Draw = function( self )
 		if self.angle == 0 then
 			self.layouter:DrawText(self.text, self.x, self.y, self.w, self.h, self.halign, self.valign)
 		else
+			mat:Identity()
+
+			-- cam.PushModelMatrix replaces the model matrix pushed onto the stack by cam.Start3D2D
+			-- We have to recreate the cam.Start3D2D model matrix
+			if ent:GetClass() == "gmod_wire_egp_emitter" then
+				-- This corresponds to the pos and ang offsets specified in the egp emitter file
+				-- We add 180 to the roll because this is how cam.Start3D2D works
+				local pos = ent:LocalToWorld(Vector(-64, 0, 135))
+				local ang = ent:LocalToWorldAngles(Angle(0, 0, 90 + 180))
+
+				mat:SetTranslation(pos)
+				mat:SetAngles(ang)
+				mat:SetScale(Vector(0.25, 0.25, 0.25))
+			end
+
 			matAng.y = -self.angle
-			mat:SetAngles(matAng)
-			matTrans.x = x
-			matTrans.y = y
-			matTrans:Rotate(matAng)
-			mat:SetTranslation(Vector(self.x,self.y,0)-matTrans)
+
+			mat:Translate(Vector(self.x, self.y, 0))
+			mat:Rotate(matAng)
+
 			cam_PushModelMatrix(mat)
 				self.layouter:DrawText(self.text, 0, 0, self.w, self.h, self.halign, self.valign)
 			cam_PopModelMatrix()

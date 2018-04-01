@@ -40,7 +40,7 @@ if CLIENT then
 	matTrans = Vector(0, 0, 0)
 end
 
-Obj.Draw = function( self )
+Obj.Draw = function( self, ent )
 	if (self.text and #self.text>0) then
 		surface_SetTextColor( self.r, self.g, self.b, self.a )
 
@@ -87,13 +87,26 @@ Obj.Draw = function( self )
 				y = (h * ((self.valign%10)/2))
 			end
 
-			-- Thanks to Wizard for the base to this rotateable text code. I edited it a bit to properly support alignment
+			mat:Identity()
+
+			-- cam.PushModelMatrix replaces the model matrix pushed onto the stack by cam.Start3D2D
+			-- We have to recreate the cam.Start3D2D model matrix
+			if ent:GetClass() == "gmod_wire_egp_emitter" then
+				-- This corresponds to the pos and ang offsets specified in the egp emitter file
+				-- We add 180 to the roll because this is how cam.Start3D2D works
+				local pos = ent:LocalToWorld(Vector(-64, 0, 135))
+				local ang = ent:LocalToWorldAngles(Angle(0, 0, 90 + 180))
+
+				mat:SetTranslation(pos)
+				mat:SetAngles(ang)
+				mat:SetScale(Vector(0.25, 0.25, 0.25))
+			end
+
 			matAng.y = -self.angle
-			mat:SetAngles(matAng)
-			matTrans.x = x
-			matTrans.y = y
-			matTrans:Rotate(matAng)
-			mat:SetTranslation(Vector(self.x,self.y,0)-matTrans)
+
+			mat:Translate(Vector(self.x, self.y, 0))
+			mat:Rotate(matAng)
+
 			surface_SetTextPos(0, 0)
 			cam_PushModelMatrix(mat)
 				surface_DrawText( self.text )
