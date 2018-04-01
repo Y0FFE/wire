@@ -144,8 +144,11 @@ end
 function ENT:WriteCell(Address, value)
 	if Address == 0 then
 		self:UnshiftBuffer() -- User wants to remove the first key in the buffer
-	else
+		return true
+	end
+	if Address == 1 then
 		self:RemoveFromBufferByKey(value)
+		return true
 	end
 
 	return false
